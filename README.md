@@ -181,16 +181,14 @@ If you use this code in your research, please cite:
   
 ## Citation
 
-If you use this code or data in your research, please cite:
-```bibtex
-@article{gohouede2025dimensionally,
-  title={A dimensionally consistent reformulation of the {HyMoLAP} rainfall--runoff model: interpretability and robustness across {CAMELS} datasets},
-  author={Gohouede, Lionel C\'edric and Hou\'enafa, Sianou Ez\'eckiel and Biao, Eli\'ezer Iboukoun and Johnson, Olatunji and Sezen, Cenk},
-  journal={[Journal Name]},
-  year={2025},
-  note={In preparation}
-}
-```
+If you use this code or data in your research, please cite: (Not yet available)
+
+
+
+
+
+
+
 
 **Corresponding author:** Lionel Cédric Gohouede ([gohouedecedric@gmail.com](mailto:gohouedecedric@gmail.com))
 
