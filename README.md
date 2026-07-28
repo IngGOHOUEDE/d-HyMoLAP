@@ -1,223 +1,572 @@
-# d-HyMoLAP: dimensionally consistent reformulation of HyMoLAP rainfall-runoff model.
+# d-HyMoLAP: A Dimensionally Consistent Reformulation of the HyMoLAP Rainfall–Runoff Model
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
 
-## Overview
-This repository contains the code and data for the d-HyMoLAP (dimensionally consistent reformulation of HyMoLAP rainfall-runoff model) study, a parsimonious rainfall-runoff model evaluated across 1,172 catchments from the CAMELS-FR (549) and CAMELS-GB (623) large-sample datasets. The model achieves competitive performance using only four parameters $(μ, λ, Q_s, q_s)$ and two climatic inputs (precipitation and potential evapotranspiration).
+---
 
-## Repository Structure
-```
-├── Data.zip                                                # CAMELS-FR catchment attributes and simulation results
+## Overview
+
+This repository contains the complete implementation, analyses, and supporting data accompanying the study:
+
+> **d-HyMoLAP: A Dimensionally Consistent Reformulation of the HyMoLAP Rainfall–Runoff Model**
+
+d-HyMoLAP is a parsimonious conceptual rainfall–runoff model derived from the original HyMoLAP framework by introducing two physically motivated scaling parameters ($Q_s$ and $q_s$), thereby restoring dimensional consistency while preserving the original Lagrangian ordinary differential equation (ODE) formulation.
+
+The model is evaluated on **1,172 catchments** from two large-sample hydrological datasets:
+
+- **CAMELS-FR:** 549 French catchments
+- **CAMELS-GB:** 623 British catchments
+
+The repository includes:
+
+- d-HyMoLAP implementation
+- Original HyMoLAP implementation
+- HBV benchmark implementation
+- Large-sample calibration and evaluation
+- Calibration period analysis
+- Morris global sensitivity analysis
+- Parameter attribution analysis
+- Performance diagnostics
+- SHAP interpretability analyses
+- GLUE uncertainty quantification
+- Ablation study
+- Hydrograph visualization
+
+---
+
+# Repository Structure
+
+```text
+.
+├── Data.zip
+│
+├── dHyMoLAP_Model_CAMELS_FR.ipynb
+├── dHyMoLAP_Model_CAMELS_GB.ipynb
+│
+├── HyMoLAP_Model_CAMELS_FR.ipynb
+├── HyMoLAP_Model_CAMELS_GB.ipynb
+│
+├── HBV_Model_CAMELS_FR.ipynb
+├── HBV_Model_CAMELS_GB.ipynb
+│
+├── Models_Comparison_Feature_Selection.ipynb
+│
 ├── dHyMoLAP_Calibration_Period_Analysis.ipynb
-├── dHyMoLAP_Model_CAMELS_FR.ipynb                          # d-HyMoLAP model implementation for CAMELS-FR
-├── dHyMoLAP_Model_CAMELS_GB.ipynb                          # d-HyMoLAP model implementation for CAMELS-GB
+│
 ├── dHyMoLAP_Parameter_Sensitivity_Analysis.ipynb
 ├── dHyMoLAP_Parameters_Analysis_Interpretability.ipynb
 ├── dHyMoLAP_Performance_Sensitivity_Analysis.ipynb
-├── d_HyMoLAP_Descriptive_Stats_Params_Performance.ipynb
+│
 ├── d_HyMoLAP_Performance_Based_Feature_Selection.ipynb
+│
+├── d_HyMoLAP_GLUE_Uncertainty_Quantification.ipynb
+│
+├── Ablation_Analysis_dHyMoLAP_CAMELS_FR.ipynb
+├── Ablation_Analysis_dHyMoLAP_CAMELS_GB.ipynb
+│
+├── d_HyMoLAP_Descriptive_Stats_Params_Performance.ipynb
 ├── d_HyMoLAP_Simulation_Plots_FR_GB_Catchments.ipynb
-├── HyMoLAP_Model_CAMELS_FR.ipynb                           # Original HyMoLAP model implementation for CAMELS-FR
-├── HyMoLAP_Model_CAMELS_GB.ipynb                           # Original HyMoLAP model implementation for CAMELS-GB
-├── requirements.txt                                        # Python package dependencies
-└── README.md                                               # This file
+│
+├── requirements.txt
+└── README.md
 ```
 
-## Notebooks
+---
 
-### 1. `d_HyMoLAP_Descriptive_Stats_Params_Performance.ipynb`
-**Descriptive Statistics: Parameters and Performance**
-- Summary statistics for calibrated parameters $(μ, λ, Q_s, q_s)$ across CAMELS-FR and CAMELS-GB
-- Performance metrics (NSE, RMSE) distributions
-- Comparison between HyMoLAP and d-HyMoLAP
+# Notebook Description
 
-### 2. `dHyMoLAP_Calibration_Period_Analysis.ipynb`
-**Calibration Period Sensitivity Analysis**
-- Impact of calibration period length (3-15 years) on model performance
-- Evaluation across 50 randomly selected CAMELS-FR catchments
-- Fixed validation period (2016-2020) analysis
-- Violin plots showing NSE distribution vs. calibration length
+## 1. `dHyMoLAP_Model_CAMELS_FR.ipynb`
 
-### 3. `dHyMoLAP_Model_CAMELS_FR.ipynb`
-**d-HyMoLAP Model Implementation for CAMELS-FR**
-- Model calibration across 549 CAMELS-FR catchments
-- Parameter optimization using Nelder-Mead algorithm
-- Training/validation split and performance evaluation
+### d-HyMoLAP implementation (CAMELS-FR)
 
-### 4. `dHyMoLAP_Model_CAMELS_GB.ipynb`
-**d-HyMoLAP Model Implementation for CAMELS-GB**
-- Model calibration across 623 CAMELS-GB catchments
-- Parameter optimization and performance metrics
-- Comparison with CAMELS-FR results
+Main calibration and evaluation workflow of d-HyMoLAP on the CAMELS-FR dataset.
 
-### 5. `dHyMoLAP_Parameter_Sensitivity_Analysis.ipynb`
-**Morris Sensitivity Analysis**
-- Global sensitivity analysis using Morris method
-- Elementary effects for all four parameters $(μ, λ, Q_s, q_s)$
-- Averaged results across 20 CAMELS-FR catchments
-- Parameter ranking by influence on NSE
+Main tasks:
 
-### 6. `dHyMoLAP_Parameters_Analysis_Interpretability.ipynb`
-**Parameter Attribution to Hydroclimatic Controls**
-- Spearman rank correlations between parameters and 200+ catchment attributes
-- Top 15 correlates for each parameter $(μ, λ, Q_s, q_s)$
-- Parameter correlation analysis
-- Correlation heatmaps by parameter
+- rainfall–runoff simulation
+- Nelder–Mead calibration
+- training/validation evaluation
+- parameter estimation
+- performance metrics computation
+- export of calibrated parameters and simulations
 
-### 7. `dHyMoLAP_Performance_Sensitivity_Analysis.ipynb`
-**Performance Sensitivity to Hydroclimatic Factors**
-- NSE performance analysis across hydroclimatic gradients
-- Factors: mean annual precipitation, catchment wetness (Q/P), solid precipitation fraction, hydrological zones, catchment area
-- Statistical tests (Spearman correlation, ANOVA)
-- Performance stratification by factor categories
+---
 
-### 8. `d_HyMoLAP_Performance_Based_Feature_Selection.ipynb`
-**SHAP-Based Feature Importance Analysis**
-- Random Forest and XGBoost models trained on NSE predictions
-- SHAP (SHapley Additive exPlanations) values for feature importance
-- Consensus ranking of top 20 catchment characteristics
+## 2. `dHyMoLAP_Model_CAMELS_GB.ipynb`
 
-### 9. `d_HyMoLAP_Simulation_Plots_FR_GB_Catchments.ipynb`
-**Hydrograph Visualization**
-- 2×2 subplot hydrographs for selected CAMELS-FR and CAMELS-GB catchments
-- Quantile-based catchment selection (10th/90th percentile NSE)
-- Observed vs. simulated discharge time series
+### d-HyMoLAP implementation (CAMELS-GB)
 
-### 10. `HyMoLAP_Model_CAMELS_FR.ipynb`
-**Original HyMoLAP Model Implementation for CAMELS-FR**
-- Baseline model calibration for comparison with d-HyMoLAP
-- Performance evaluation across CAMELS-FR catchments
+Same workflow as above for the CAMELS-GB dataset.
 
-### 11. `HyMoLAP_Model_CAMELS_GB.ipynb`
-**Original HyMoLAP Model Implementation for CAMELS-GB**
-- Baseline model calibration for comparison with d-HyMoLAP
-- Performance evaluation across CAMELS-GB catchments
-  
-## Data
-The `Data.zip` file contains:
-#### Model Results
-- `dHyMoLAP_Simulation_Data_CAMELS_FR.csv` - Calibrated parameters and performance metrics of d-HyMoLAP on CAMELS-FR
-- `dHyMoLAP_Simulation_Data_CAMELS_GB.csv` - Calibrated parameters and performance metrics of d-HyMoLAP on CAMELS-GB
-- `HyMoLAP_Simulation_Data_CAMELS_FR.csv`  - Calibrated parameters and performance metrics of HyMoLAP on CAMELS-FR
-- `HyMoLAP_Simulation_Data_CAMELS_GB.csv`  - Calibrated parameters and performance metrics of HyMoLAP on CAMELS-GB
+Outputs include:
 
-#### Catchment Attributes (11 files)
-- `CAMELS_FR_climatic_statistics.csv` - Climate variables
-- `CAMELS_FR_hydrological_signatures.csv` - Flow regime characteristics
-- `CAMELS_FR_hydroclimatic_statistics_joint_availability_yearly.csv` - Water balance metrics
-- `CAMELS_FR_topography_general_attributes.csv` - Elevation, slope, terrain indices
-- `CAMELS_FR_geology_attributes.csv` - Lithology fractions
-- `CAMELS_FR_hydrogeology_attributes.csv` - Aquifer properties
-- `CAMELS_FR_soil_general_attributes.csv` - Soil texture, depth, water capacity
-- `CAMELS_FR_land_cover_attributes.csv` - CORINE land cover classes
-- `CAMELS_FR_station_general_attributes.csv` - Station metadata
-- `CAMELS_FR_site_general_attributes.csv` - Site characteristics
-- `CAMELS_FR_catchment_nestedness_information.csv` - Nested catchment relationships
-- `CAMELS_FR_human_influences_dams.csv` - Dam impacts
+- calibrated parameters
+- validation performance
+- simulated discharge
+- summary statistics
 
-**Total features:** 200+ catchment characteristics organized by category (climate, hydrology, topography, geology, hydrogeology, soil, land cover, etc.)
+---
 
-### CAMELS-GB (671 catchments)
-**Due to file size, CAMELS-GB data is hosted separately:**
+## 3. `HyMoLAP_Model_CAMELS_FR.ipynb`
 
-📂 **[Download CAMELS-GB Data](https://drive.google.com/drive/folders/1B1WY5IIUp6aAWx_UeQOMXc9eEGBNzfFC?usp=sharing)**
-The Google Drive folder contains time series data 
+### Original HyMoLAP implementation (CAMELS-FR)
 
-## Requirements
+Implements the original HyMoLAP model to provide the baseline comparison against d-HyMoLAP.
 
-- Python >= 3.8
-- See `requirements.txt` for package dependencies
+---
 
-## Installation
+## 4. `HyMoLAP_Model_CAMELS_GB.ipynb`
+
+### Original HyMoLAP implementation (CAMELS-GB)
+
+Large-sample implementation of the original HyMoLAP on CAMELS-GB.
+
+---
+
+## 5. `HBV_Model_CAMELS_FR.ipynb`
+
+### HBV benchmark model (CAMELS-FR)
+
+Calibration and evaluation of the HBV conceptual rainfall–runoff model using the same experimental protocol adopted for d-HyMoLAP.
+
+Outputs are used for direct benchmarking.
+
+---
+
+## 6. `HBV_Model_CAMELS_GB.ipynb`
+
+### HBV benchmark model (CAMELS-GB)
+
+HBV implementation on CAMELS-GB under the same calibration and validation protocol.
+
+---
+
+## 7. `Models_Comparison_Feature_Selection.ipynb`
+
+### Comparative SHAP analysis
+
+Identifies the hydroclimatic and physiographic conditions under which
+
+- d-HyMoLAP outperforms HyMoLAP
+- d-HyMoLAP outperforms HBV
+
+using classification models together with SHAP explanations.
+
+---
+
+## 8. `dHyMoLAP_Calibration_Period_Analysis.ipynb`
+
+### Calibration period analysis
+
+Investigates the influence of calibration record length on parameter estimation and predictive performance.
+
+The notebook evaluates calibration periods ranging from 3 to 15 years while maintaining a fixed validation period.
+
+---
+
+## 9. `dHyMoLAP_Parameter_Sensitivity_Analysis.ipynb`
+
+### Morris global sensitivity analysis
+
+Performs global parameter sensitivity analysis using the Morris elementary effects method.
+
+Outputs include
+
+- μ*
+- σ
+- global parameter ranking
+
+for
+
+- μ
+- λ
+- Qs
+- qs
+
+---
+
+## 10. `dHyMoLAP_Parameters_Analysis_Interpretability.ipynb`
+
+### Parameter attribution analysis
+
+Investigates relationships between calibrated parameters and more than 200 catchment descriptors using Spearman rank correlation.
+
+Analyses include
+
+- parameter–attribute correlations
+- parameter interdependence
+- heatmaps
+- top correlated descriptors
+
+---
+
+## 11. `dHyMoLAP_Performance_Sensitivity_Analysis.ipynb`
+
+### Performance diagnostics
+
+Evaluates model performance across hydroclimatic gradients including
+
+- precipitation
+- catchment wetness
+- snow influence
+- hydrological zones
+- catchment area
+
+using
+
+- Spearman correlation
+- ANOVA
+- performance stratification
+
+---
+
+## 12. `d_HyMoLAP_Performance_Based_Feature_Selection.ipynb`
+
+### Performance-based SHAP analysis
+
+Uses Random Forest and XGBoost regression models together with SHAP values to identify the catchment characteristics controlling d-HyMoLAP predictive performance.
+
+This notebook corresponds to the regression-based SHAP analysis presented in the manuscript.
+
+---
+
+## 13. `d_HyMoLAP_GLUE_Uncertainty_Quantification.ipynb`
+
+### GLUE uncertainty analysis
+
+Implements Generalized Likelihood Uncertainty Estimation (GLUE) to quantify parameter uncertainty and predictive uncertainty for representative catchments.
+
+Outputs include
+
+- behavioural parameter distributions
+- prediction intervals
+- uncertainty envelopes
+- parameter identifiability assessment
+
+---
+
+## 14. `Ablation_Analysis_dHyMoLAP_CAMELS_FR.ipynb`
+
+### Ablation analysis (CAMELS-FR)
+
+Evaluates the contribution of the proposed scaling parameters by progressively removing
+
+- $q_s$
+- $Q_s$
+
+and comparing four model configurations:
+
+- Phase I: d-HyMoLAP
+- Phase II: $q_s=1$
+- Phase III: $Q_s=1$
+- Phase IV: Original HyMoLAP
+
+---
+
+## 15. `Ablation_Analysis_dHyMoLAP_CAMELS_GB.ipynb`
+
+### Ablation analysis (CAMELS-GB)
+
+Repeats the complete ablation experiment on CAMELS-GB.
+
+---
+
+## 16. `d_HyMoLAP_Descriptive_Stats_Params_Performance.ipynb`
+
+### Descriptive statistics
+
+Summarizes
+
+- calibrated parameter distributions
+- model performance
+- descriptive statistics
+- comparison among HyMoLAP, d-HyMoLAP and HBV
+
+across both datasets.
+
+---
+
+## 17. `d_HyMoLAP_Simulation_Plots_FR_GB_Catchments.ipynb`
+
+### Hydrograph visualization
+
+Generates representative observed versus simulated hydrographs for selected CAMELS-FR and CAMELS-GB catchments.
+
+Catchments are selected according to different performance quantiles to illustrate both successful and challenging simulations.
+
+---
+# Data
+
+The repository contains all files required to reproduce the analyses presented in the manuscript.
+
+## 1. Model Simulation Results
+
+The `Data.zip` archive contains the calibrated parameters and model performance metrics for all rainfall–runoff models evaluated in this study.
+
+### d-HyMoLAP
+
+- `dHyMoLAP_Simulation_Data_CAMELS_FR.csv`
+- `dHyMoLAP_Simulation_Data_CAMELS_GB.csv`
+
+These files contain
+
+- calibrated parameters ($\mu$, $\lambda$, $Q_s$, $q_s$)
+- calibration and validation performance metrics
+- simulated discharge
+- summary statistics
+
+---
+
+### Original HyMoLAP
+
+- `HyMoLAP_Simulation_Data_CAMELS_FR.csv`
+- `HyMoLAP_Simulation_Data_CAMELS_GB.csv`
+
+These files provide the baseline results used for comparison with d-HyMoLAP.
+
+---
+
+### HBV
+
+- `HBV_Simulation_Data_CAMELS_FR.csv`
+- `HBV_Simulation_Data_CAMELS_GB.csv`
+
+These files contain the calibrated HBV benchmark results used throughout the comparative analyses.
+
+---
+
+## 2. CAMELS-FR Catchment Attributes
+
+The repository contains all CAMELS-FR physiographic, climatic, and hydrological descriptors used throughout the interpretability analyses.
+
+Included files are
+
+- `CAMELS_FR_climatic_statistics.csv`
+- `CAMELS_FR_hydrological_signatures.csv`
+- `CAMELS_FR_hydroclimatic_statistics_joint_availability_yearly.csv`
+- `CAMELS_FR_topography_general_attributes.csv`
+- `CAMELS_FR_geology_attributes.csv`
+- `CAMELS_FR_hydrogeology_attributes.csv`
+- `CAMELS_FR_soil_general_attributes.csv`
+- `CAMELS_FR_land_cover_attributes.csv`
+- `CAMELS_FR_station_general_attributes.csv`
+- `CAMELS_FR_site_general_attributes.csv`
+- `CAMELS_FR_catchment_nestedness_information.csv`
+- `CAMELS_FR_human_influences_dams.csv`
+
+These datasets provide more than **200 catchment descriptors**, including
+
+- climate
+- hydrological signatures
+- water balance
+- topography
+- geology
+- hydrogeology
+- soils
+- land cover
+- human influences
+
+used for
+
+- parameter attribution
+- SHAP analyses
+- performance interpretation
+
+---
+
+## 3. CAMELS-GB Dataset
+
+Due to file size limitations, the CAMELS-GB forcing and attribute data are hosted separately.
+
+📂 **Download CAMELS-GB dataset**
+
+https://drive.google.com/drive/folders/1B1WY5IIUp6aAWx_UeQOMXc9eEGBNzfFC?usp=sharing
+
+The folder contains
+
+- meteorological forcing
+- discharge observations
+- catchment attributes
+
+required to reproduce the CAMELS-GB experiments.
+
+---
+
+# Requirements
+
+The code was developed using
+
+- Python ≥ 3.8
+
+Required Python packages are listed in
+
+```
+requirements.txt
+```
+
+---
+
+# Installation
+
+Clone the repository
+
 ```bash
-# Clone repository
 git clone https://github.com/IngGOHOUEDE/d-HyMoLAP.git
+
 cd d-HyMoLAP
-
-# Extract data
-unzip Data.zip
-
-# Install dependencies
-pip install -r requirements.txt
-
-# Or install in a virtual environment (recommended)
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
-pip install -r requirements.txt
 ```
 
-### Google Colab
+Extract the data
 
-All dependencies are pre-installed in Google Colab. Simply upload the notebooks and run!
-
-### Running Notebooks
-Open any notebook in Jupyter/Google Colab:
 ```bash
-jupyter notebook dHyMoLAP_Calibration_Period_Analysis.ipynb
+unzip Data.zip
 ```
 
-## Citation
+Install the required packages
 
-If you use this code in your research, please cite: (Not yet available)
+```bash
+pip install -r requirements.txt
+```
 
-## References
+or using a virtual environment
 
-### CAMELS Datasets
-- **CAMELS-FR:** Delaigue, O., Guimarães, G. M., Brigode, P., Génot, B., Perrin, C., Soubeyroux, J.-M., Janet, B., Addor, N., and Andréassian, V. (2024). CAMELS-FR dataset: a large-sample hydroclimatic dataset for France to explore hydrological diversity and support model benchmarking. *Earth System Science Data*, 16(1), 197–224. https://doi.org/10.5194/essd-16-197-2024
+```bash
+python -m venv venv
 
-- **CAMELS-GB:** Coxon, G., Addor, N., Bloomfield, J. P., Freer, J., Fry, M., Hannaford, J., ... and Woods, R. (2020). CAMELS-GB: hydrometeorological time series and landscape attributes for 671 catchments in Great Britain. *Earth System Science Data*, 12(4), 2459–2483. https://doi.org/10.5194/essd-12-2459-2020
+# Linux / macOS
+source venv/bin/activate
 
-### Original HyMoLAP Model
-- **HyMoLAP Development:** Alamou, E. (2011). *Application du principe de moindre action à la modélisation pluie-débit*. PhD thesis, Université d'Abomey-Calavi, Benin.
-  
-## Citation
+# Windows
+venv\Scripts\activate
 
-If you use this code or data in your research, please cite: (Not yet available)
-
-**Corresponding author:** Lionel Cédric Gohouede ([gohouedecedric@gmail.com](mailto:gohouedecedric@gmail.com))
-
----
-
-## References
-
-### CAMELS Datasets
-- **CAMELS-FR:** Delaigue, O., Guimarães, G. M., Brigode, P., Génot, B., Perrin, C., Soubeyroux, J.-M., Janet, B., Addor, N., and Andréassian, V. (2024). CAMELS-FR dataset: a large-sample hydroclimatic dataset for France to explore hydrological diversity and support model benchmarking. *Earth System Science Data*, 16(1), 197–224. https://doi.org/10.5194/essd-16-197-2024
-
-- **CAMELS-GB:** Coxon, G., Addor, N., Bloomfield, J. P., Freer, J., Fry, M., Hannaford, J., ... and Woods, R. (2020). CAMELS-GB: hydrometeorological time series and landscape attributes for 671 catchments in Great Britain. *Earth System Science Data*, 12(4), 2459–2483. https://doi.org/10.5194/essd-12-2459-2020
-
-### Original HyMoLAP Model
-- **HyMoLAP Development:** Alamou, E. (2011). *Application du principe de moindre action à la modélisation pluie-débit*. PhD thesis, Université d'Abomey-Calavi, Benin.
----
-
-## Contact
-
-For questions or collaborations, please contact:
-
-**Lionel Cédric Gohouede**  
-📧 Email: [gohouedecedric@gmail.com](mailto:gohouedecedric@gmail.com)  
-🔗 GitHub: [@IngGOHOUEDE](https://github.com/IngGOHOUEDE)
+pip install -r requirements.txt
+```
 
 ---
 
-## Acknowledgments
+# Running the Notebooks
 
-We gratefully acknowledge:
-- The **CAMELS-FR** team (Delaigue et al., 2024) for providing open-access hydroclimatic data for French catchments
-- The **CAMELS-GB** team (Coxon et al., 2020) for providing open-access data for British catchments
-- **Abel Afouda** and **Eric Alamou** for the original development of the HyMoLAP model framework
-- The large-sample hydrology community for advancing open science in catchment modeling
+Launch Jupyter Notebook
+
+```bash
+jupyter notebook
+```
+
+or Jupyter Lab
+
+```bash
+jupyter lab
+```
+
+Each notebook can be executed independently.
+
+For reproducing the complete study, the recommended execution order is
+
+1. dHyMoLAP model calibration
+2. HyMoLAP model calibration
+3. HBV model calibration
+4. Descriptive statistics
+5. Performance diagnostics
+6. Morris sensitivity analysis
+7. Parameter attribution analysis
+8. SHAP analyses
+9. GLUE uncertainty analysis
+10. Ablation analysis
+11. Hydrograph visualization
 
 ---
 
-**Last Updated:** February 2025
+# Google Colab
 
-## License
+All notebooks are fully compatible with **Google Colab**.
 
-This project is licensed under the MIT License.
+After cloning or uploading the repository,
 
-<details>
-<summary>Click to view MIT License</summary>
+1. upload `Data.zip`,
+2. extract the archive,
+3. install the dependencies from `requirements.txt`,
+4. execute the notebooks normally.
+
+---
+
+# Citation
+
+If you use this repository in your research, please cite
+
+> **(Citation will be added after publication.)**
+
+---
+
+# References
+
+## CAMELS-FR
+
+Delaigue, O., Guimarães, G. M., Brigode, P., Génot, B., Perrin, C., Soubeyroux, J.-M., Janet, B., Addor, N., & Andréassian, V. (2024).
+
+**CAMELS-FR: A large-sample hydroclimatic dataset for France to explore hydrological diversity and support model benchmarking.**
+
+*Earth System Science Data*, **16**, 197–224.
+
+https://doi.org/10.5194/essd-16-197-2024
+
+---
+
+## CAMELS-GB
+
+Coxon, G., Addor, N., Bloomfield, J. P., Freer, J., Fry, M., Hannaford, J., et al. (2020).
+
+**CAMELS-GB: Hydrometeorological time series and landscape attributes for 671 catchments in Great Britain.**
+
+*Earth System Science Data*, **12**, 2459–2483.
+
+https://doi.org/10.5194/essd-12-2459-2020
+
+---
+
+## Original HyMoLAP
+
+Alamou, E. (2011).
+
+**Application du principe de moindre action à la modélisation pluie-débit.**
+
+Ph.D. Thesis,
+
+Université d'Abomey-Calavi,
+
+Benin.
+
+---
+
+# Contact
+
+For questions, suggestions, or collaborations, please contact
+
+**Lionel Cédric Gohouede**
+
+Email:
+gohouedecedric@gmail.com
+
+GitHub:
+https://github.com/IngGOHOUEDE
+
+---
+
+# Acknowledgments
+
+The authors gratefully acknowledge
+
+- the **CAMELS-FR** team for providing open-access hydroclimatic data;
+- the **CAMELS-GB** team for making the Great Britain dataset publicly available;
+- **Prof. Eric Alamou** and **Prof. Abel Afouda** for the original development of the HyMoLAP framework;
+- the large-sample hydrology community for promoting open science and reproducible hydrological modelling.
+
+---
+
+# License
+
+This project is distributed under the **MIT License**.
+
 ```
 MIT License
 
@@ -235,13 +584,5 @@ copies or substantial portions of the Software.
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
 ```
-
-</details>
-
----
